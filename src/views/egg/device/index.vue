@@ -79,14 +79,16 @@
 			</el-table-column>
 			<!-- <el-table-column  prop="device.currentWeight" label="当前重量" header-align="center" align="center" width="0"></el-table-column>
 			 -->
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="400">
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="600">
 				<template #default="scope">
 					<el-button v-auth="'egg:device:update'" type="primary" link
 						@click="addOrUpdateHandle(scope.row.device.id)">修改</el-button>
 					<el-button v-auth="'egg:device:delete'" type="primary" link
 						@click="deleteBatchHandle(scope.row.device.id)">删除</el-button>
-					<el-button v-if="scope.row.device.type === 3" type="primary" link
-						@click="viewDeviceHandle(scope.row.device.id)">台卡绑定</el-button>
+						<!-- <el-button v-if="scope.row.device.type === 3" type="primary" link
+							@click="viewDeviceHandle(scope.row.device.id)">台卡</el-button> -->
+					<el-button v-if="scope.row.device.type === 2" type="primary" link
+						@click="openGatewayDeviceBind(scope.row.device)">微型价签绑定</el-button>
 					<el-button type="primary" link
 						@click="showWeightHandle(scope.row.device)">查看重量</el-button>
 				</template>
@@ -97,11 +99,14 @@
 			@current-change="currentChangeHandle">
 		</el-pagination>
 
+		<!-- 微型价签绑定弹窗 -->
+		<gateway-device-bind v-if="gatewayDeviceBindVisible" ref="gatewayDeviceBindRef" v-model:visible="gatewayDeviceBindVisible" :device="currentDevice" @refreshDataList="getDataList" />
+
 		<!-- 重量显示弹窗 -->
 		<el-dialog v-model="weightDialogVisible" title="设备重量" width="30%" :close-on-click-modal="false">
 			<div style="text-align: center; font-size: 18px;">
 				<p>设备名称：{{ currentDevice?.name }}</p>
-				<p>当前重量：{{ currentDevice?.currentWeight || '0' }} kg</p>
+				<p>当前重量：{{ currentDevice?.currentWeight || '无' }} kg</p>
 			</div>
 			<template #footer>
 				<el-button @click="weightDialogVisible = false">关闭</el-button>
@@ -124,6 +129,7 @@ import { IHooksOptions } from '@/hooks/interface'
 import AddOrUpdate from './add-or-update.vue'
 import DeviceBindForm from './device-bind-form.vue'
 import { ElMessage } from 'element-plus'
+import GatewayDeviceBind from './gateway-device-bind.vue'
 
 interface DeviceWithTemplates {
 	device: {
@@ -214,5 +220,17 @@ const currentDevice = ref<any>(null)
 const showWeightHandle = (device: any) => {
 	currentDevice.value = device
 	weightDialogVisible.value = true
+}
+
+const gatewayDeviceBindVisible = ref(false)
+const gatewayDeviceBindRef = ref()
+
+const openGatewayDeviceBind = (device: any) => {
+	console.log("11")
+	currentDevice.value = device
+	gatewayDeviceBindVisible.value = true
+	nextTick(() => {
+		gatewayDeviceBindRef.value.init(device.id)
+	})
 }
 </script>

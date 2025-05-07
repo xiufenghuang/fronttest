@@ -79,7 +79,7 @@
       sn: '',
       name: '',
       status: '',
-      type: 0,
+      type: '',
       previousWeight: '',
       currentWeight: '',
       creator: '',
