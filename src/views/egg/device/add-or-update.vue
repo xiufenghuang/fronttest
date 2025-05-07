@@ -109,7 +109,7 @@ const handleTemplateChange = (value: any) => {
 }
   
   const getDevice = (id: number) => {
-  useDeviceApi(id).then(res => {
+    useDeviceApi(String(id)).then(res => {
     Object.assign(dataForm, res.data)
     // 处理模板ID数据
     if (dataForm.type === 3) {
